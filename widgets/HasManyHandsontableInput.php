@@ -5,19 +5,19 @@ namespace neam\yii_relations_ui\widgets;
 use neam\yii_handsontable_input\widgets\HandsontableInput;
 
 /**
- * Has many input based on handsontable.
+ * Has-many relation input based on handsontable.
  *
  * Use in a Yii 1 app as follows:
  *
  * ```php
- * $this->widget('\neam\yii_relations_ui\HasManyHandsontableInput',[
- *  'settings' => [
- *      'data' => [
- *          ['A1', 'B1', 'C1'],
- *          ['A2', 'B2', 'C2'],
- *      ],
- *  'colHeaders' => true,
- *  'rowHeaders' => true,
+ * $this->widget('\neam\yii_relations_ui\widgets\HasManyHandsontableInput',[
+ *   'model' => $model->node(),
+ *   'relation' => 'routes',
+ *   'relatedAttributes' => [
+ *       'route',
+ *       'route_type_id',
+ *       'node_id',
+ *   ]
  *  ]
  * ]);
  * ```
