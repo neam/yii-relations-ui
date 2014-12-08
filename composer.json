@@ -21,7 +21,7 @@
     "require": {
         "php": ">=5.4.0",
         "neam/yii-relations-ui-core": "*@dev",
-        "neam/yii-handsontable-widget": "*@dev",
+        "neam/yii-handsontable-input": "*@dev",
         "yiisoft/yii": ">=1.1.0"
     }
 }
