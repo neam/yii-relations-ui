@@ -39,9 +39,9 @@ class HasManyHandsontableInput extends HandsontableInput
     public $relation = null;
 
     /**
-     * @var array $relatedAttributes
+     * @var array $displayAttributes
      */
-    public $relatedAttributes = [];
+    public $displayAttributes = [];
 
     public function init()
     {
@@ -53,23 +53,28 @@ class HasManyHandsontableInput extends HandsontableInput
             throw new \CException("HasManyHandsontableInput requires a model");
         }
 
-        // default to use all attributes of the related model class
-        if (empty($this->relatedAttributes)) {
-            $relations = $this->model->relations();
-            $modelClass = $relations[$this->relation][1];
-            $this->relatedAttributes = array_keys($modelClass::model()->attributes);
+        // attributes of the related model class
+        $relations = $this->model->relations();
+        $modelClass = $relations[$this->relation][1];
+        $relatedAttributes = array_keys($modelClass::model()->attributes);
+
+        // default
+        if (empty($this->displayAttributes)) {
+            $this->displayAttributes = $relatedAttributes;
         }
 
         // format the handsontable settings in the way handsontable expects it
+        $dataSchema = new \stdClass();
+        foreach ($relatedAttributes as $attribute) {
+            $dataSchema->{$attribute} = null;
+        }
         $columns = array();
         $colHeaders = array();
-        $dataSchema = new \stdClass();
-        foreach ($this->relatedAttributes as $attribute) {
+        foreach ($this->displayAttributes as $attribute) {
             $column = new \stdClass;
             $column->data = $attribute;
             $colHeaders[] = $attribute;
             $columns[] = $column;
-            $dataSchema->{$attribute} = null;
         }
 
         $this->settings = array_merge($this->settings,
