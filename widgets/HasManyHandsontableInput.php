@@ -17,9 +17,10 @@ use neam\yii_handsontable_input\widgets\HandsontableInput;
  *       'columns' => [
  *           (object) ['data' => 'id'],
  *           (object) ['data' => 'route'],
- *           (object) ['data' => 'canonical', 'type' => 'checkbox'],
+ *           (object) ['data' => 'canonical', 'type' => 'checkbox', 'checkedTemplate' => 1, 'uncheckedTemplate' => 0], // example of using checkbox to save an attribute of type BOOLEAN NOT NULL
  *           (object) ['data' => 'route_type_id'],
  *           (object) ['data' => 'node_id'],
+ *           (object) ['special' => 'delete_checkbox'], // special virtual column to mark which items should be deleted
  *       ]
  *    ]
  * ]);
@@ -84,19 +85,39 @@ class HasManyHandsontableInput extends HandsontableInput
             $this->settings["columns"] = $columns;
         }
 
+        parent::init();
+    }
+
+    public function populateSettings($dataJson)
+    {
+
+        parent::populateSettings($dataJson);
+
+        // Add necessary attributes in data for special _delete column(s)
+        foreach ($this->settings["columns"] as $i => &$column) {
+            if (isset($column->special) && $column->special == "delete_checkbox") {
+                $column->data = "_delete";
+                $column->type = "checkbox";
+                $column->uncheckedTemplate = null;
+                foreach ($this->settings["data"] as $k => &$row) {
+                    $row->_delete = null;
+                }
+                $this->settings["dataSchema"]->_delete = null;
+            }
+        }
+
         if (empty($this->settings["startCols"])) {
             $this->settings["startCols"] = count($this->settings["columns"]);
         }
 
         if (empty($this->settings["colHeaders"])) {
             $colHeaders = array();
-            foreach ($this->settings["columns"] as $column) {
-                $colHeaders[] = $column->data;
+            foreach ($this->settings["columns"] as $c) {
+                $colHeaders[] = $c->data;
             }
             $this->settings["colHeaders"] = $colHeaders;
         }
 
-        parent::init();
     }
 
 }

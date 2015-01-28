@@ -26,9 +26,10 @@ $this->widget('\neam\yii_relations_ui\widgets\HasManyHandsontableInput', [
         'columns' => [
             (object) ['data' => 'id'],
             (object) ['data' => 'route'],
-            (object) ['data' => 'canonical', 'type' => 'checkbox'],
+            (object) ['data' => 'canonical', 'type' => 'checkbox', 'checkedTemplate' => 1, 'uncheckedTemplate' => 0], // example of using checkbox to save an attribute of type BOOLEAN NOT NULL
             (object) ['data' => 'route_type_id'],
             (object) ['data' => 'node_id'],
+            (object) ['special' => 'delete_checkbox'], // special virtual column to mark which items should be deleted
         ]
     ]
 ]);
