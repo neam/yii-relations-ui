@@ -13,11 +13,23 @@ Use in a Yii 1 app as follows:
 $this->widget('\neam\yii_relations_ui\widgets\HasManyHandsontableInput', [
     'model' => $model,
     'relation' => 'routes',
-    'displayAttributes' => [
-        'id',
-        'route',
-        'route_type_id',
-        'node_id',
+]);
+```
+
+Use any customized columns and [handsontable settings](https://github.com/handsontable/jquery-handsontable/wiki):
+
+```php
+$this->widget('\neam\yii_relations_ui\widgets\HasManyHandsontableInput', [
+    'model' => $model,
+    'relation' => 'routes',
+    'settings' => [
+        'columns' => [
+            (object) ['data' => 'id'],
+            (object) ['data' => 'route'],
+            (object) ['data' => 'canonical', 'type' => 'checkbox'],
+            (object) ['data' => 'route_type_id'],
+            (object) ['data' => 'node_id'],
+        ]
     ]
 ]);
 ```

@@ -13,12 +13,15 @@ use neam\yii_handsontable_input\widgets\HandsontableInput;
  * $this->widget('\neam\yii_relations_ui\widgets\HasManyHandsontableInput',[
  *   'model' => $model->node(),
  *   'relation' => 'routes',
- *   'displayAttributes' => [
- *       'route',
- *       'route_type_id',
- *       'node_id',
- *   ]
- *  ]
+ *   'settings' => [
+ *       'columns' => [
+ *           (object) ['data' => 'id'],
+ *           (object) ['data' => 'route'],
+ *           (object) ['data' => 'canonical', 'type' => 'checkbox'],
+ *           (object) ['data' => 'route_type_id'],
+ *           (object) ['data' => 'node_id'],
+ *       ]
+ *    ]
  * ]);
  * ```
  */
@@ -38,11 +41,6 @@ class HasManyHandsontableInput extends HandsontableInput
      */
     public $relation = null;
 
-    /**
-     * @var array $displayAttributes
-     */
-    public $displayAttributes = [];
-
     public function init()
     {
 
@@ -58,35 +56,46 @@ class HasManyHandsontableInput extends HandsontableInput
         $modelClass = $relations[$this->relation][1];
         $relatedAttributes = array_keys($modelClass::model()->attributes);
 
-        // default
-        if (empty($this->displayAttributes)) {
-            $this->displayAttributes = $relatedAttributes;
+        // default settings
+
+        if (empty($this->settings["minSpareRows"])) {
+            $this->settings["minSpareRows"] = 1; // So that we can add a new
         }
 
-        // format the handsontable settings in the way handsontable expects it
-        $dataSchema = new \stdClass();
-        foreach ($relatedAttributes as $attribute) {
-            $dataSchema->{$attribute} = null;
-        }
-        $columns = array();
-        $colHeaders = array();
-        foreach ($this->displayAttributes as $attribute) {
-            $column = new \stdClass;
-            $column->data = $attribute;
-            $colHeaders[] = $attribute;
-            $columns[] = $column;
+        if (empty($this->settings["rowHeaders"])) {
+            $this->settings["rowHeaders"] = false;
         }
 
-        $this->settings = array_merge($this->settings,
-            [
-                "colHeaders" => $colHeaders,
-                "columns" => $columns,
-                "dataSchema" => $dataSchema,
-                "startCols" => count($colHeaders),
-                "minSpareRows" => 1,
-                "rowHeaders" => false,
-            ]
-        );
+        if (empty($this->settings["dataSchema"])) {
+            $dataSchema = new \stdClass();
+            foreach ($relatedAttributes as $attribute) {
+                $dataSchema->{$attribute} = null;
+            }
+            $this->settings["dataSchema"] = $dataSchema;
+        }
+
+        if (empty($this->settings["columns"])) {
+            $columns = array();
+            foreach ($relatedAttributes as $attribute) {
+                $column = new \stdClass;
+                $column->data = $attribute;
+                $columns[] = $column;
+            }
+            $this->settings["columns"] = $columns;
+        }
+
+        if (empty($this->settings["startCols"])) {
+            $this->settings["startCols"] = count($this->settings["columns"]);
+        }
+
+        if (empty($this->settings["colHeaders"])) {
+            $colHeaders = array();
+            foreach ($this->settings["columns"] as $column) {
+                $colHeaders[] = $column->data;
+            }
+            $this->settings["colHeaders"] = $colHeaders;
+        }
+
         parent::init();
     }
 
