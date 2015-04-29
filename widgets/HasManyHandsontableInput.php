@@ -4,6 +4,8 @@ namespace neam\yii_relations_ui\widgets;
 
 use neam\yii_handsontable_input\widgets\HandsontableInput;
 
+use Yii;
+
 /**
  * Has-many relation input based on handsontable.
  *
@@ -41,6 +43,16 @@ class HasManyHandsontableInput extends HandsontableInput
      * @var string $relation
      */
     public $relation = null;
+
+    /**
+     * @var string bower asset alias
+     */
+    public $appBowerAlias = 'bower-components';
+
+    /**
+     * @var bool whether or not to register select2 editor for handsontable (experimental)
+     */
+    public $registerSelect2Editor = false;
 
     public function init()
     {
@@ -86,7 +98,14 @@ class HasManyHandsontableInput extends HandsontableInput
         }
 
         parent::init();
+
     }
+
+    public function run()
+	{
+        $return = parent::run();
+        $this->registerAssets();
+	}
 
     public function populateSettings($dataJson)
     {
@@ -104,8 +123,8 @@ class HasManyHandsontableInput extends HandsontableInput
                     if (empty($row->id)) {
                         $row->_delete = true;
                     } else {
-                    $row->_delete = null;
-                }
+                        $row->_delete = null;
+                    }
                 }
                 $this->settings["dataSchema"]->_delete = null;
             }
@@ -122,6 +141,26 @@ class HasManyHandsontableInput extends HandsontableInput
             }
             $this->settings["colHeaders"] = $colHeaders;
         }
+
+    }
+
+    public function registerAssets() {
+
+        // Necessary in order to publish the yii2 assets required for this view
+        Yii::$app->getView()->registerYii2Assets();
+
+        if (!$this->registerSelect2Editor) {
+            return;
+        }
+
+        // Register select2-editor for handsontable
+        $assetPathAlias = $this->appBowerAlias.'.select2';
+        $assetsUrl = Yii::app()->assetManager->publish(Yii::getPathOfAlias($assetPathAlias), false, -1, $forceCopyAssets = false);
+        Yii::app()->getClientScript()->registerScriptFile($assetsUrl . "/select2.js");
+        Yii::app()->getClientScript()->registerCssFile($assetsUrl . "/select2.css");
+        $assetPathAlias = $this->appBowerAlias . '.Handsontable-select2-editor';
+        $assetsUrl = Yii::app()->assetManager->publish(Yii::getPathOfAlias($assetPathAlias), false, -1, $forceCopyAssets = false);
+        Yii::app()->getClientScript()->registerScriptFile($assetsUrl . "/select2-editor.js");
 
     }
 
