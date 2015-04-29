@@ -100,7 +100,12 @@ class HasManyHandsontableInput extends HandsontableInput
                 $column->type = "checkbox";
                 $column->uncheckedTemplate = null;
                 foreach ($this->settings["data"] as $k => &$row) {
+                    // Mark all suggestions (those without id set) as to be deleted so that they need to be manually confirmed before saving
+                    if (empty($row->id)) {
+                        $row->_delete = true;
+                    } else {
                     $row->_delete = null;
+                }
                 }
                 $this->settings["dataSchema"]->_delete = null;
             }
