@@ -11,7 +11,7 @@ use neam\yii_handsontable_input\widgets\HandsontableInput;
  *
  * ```php
  * $this->widget('\neam\yii_relations_ui\widgets\HasManyHandsontableInput',[
- *   'model' => $model->node(),
+ *   'model' => $model->ensureNode(),
  *   'relation' => 'routes',
  *   'settings' => [
  *       'columns' => [
